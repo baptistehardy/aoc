@@ -1,27 +1,33 @@
 const input = await Deno.readTextFile("./01.txt");
 
-const leftColumn: number[] = [];
-const rightColumn: number[] = [];
+interface Columns {
+  leftColumn: number[];
+  rightColumn: number[];
+}
 
-input.split("\n").map((line) => {
-  const result = line.split("   ");
+const { leftColumn, rightColumn } = input
+  .split("\n")
+  .reduce<Columns>((accumulator, line) => {
+    const [left, right] = line.split("   ");
 
-  if (isNaN(parseInt(result[0]))) {
-    return;
-  }
+    // deal with trailing newline
+    if (right === undefined) {
+      return accumulator;
+    }
 
-  leftColumn.push(parseInt(result[0]));
-  rightColumn.push(parseInt(result[1]));
-});
+    accumulator.leftColumn.push(parseInt(left));
+    accumulator.rightColumn.push(parseInt(right));
 
-leftColumn.sort((a, b) => a - b);
-rightColumn.sort((a, b) => a - b);
+    return accumulator;
+  }, { leftColumn: [], rightColumn: [] });
 
-let totalDistance = 0;
-
-leftColumn.map((location, index) => {
-  totalDistance += Math.abs(location - rightColumn.at(index)!);
-});
+const totalDistance = leftColumn
+  .sort((a, b) => a - b)
+  .reduce(
+    (sum, location, index) =>
+      sum + Math.abs(location - rightColumn.sort((a, b) => a - b)[index]),
+    0,
+  );
 
 console.log(totalDistance); // 1579939
 
