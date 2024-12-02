@@ -1,4 +1,4 @@
-const input = await Deno.readTextFile("./01.txt");
+const input = await Deno.readTextFile("./01.input.txt");
 
 interface Columns {
   leftColumn: number[];
